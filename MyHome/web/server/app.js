@@ -5,15 +5,10 @@ class App {
     constructor() {
         this.app = express();
         this.setMiddleWare();
-        this.getRouting();
     }
 
     setMiddleWare() {
         this.app.use(logger('dev'));
-    }
-
-    getRouting (){
-        this.app.use(require('./controllers'))
     }
 }
 
