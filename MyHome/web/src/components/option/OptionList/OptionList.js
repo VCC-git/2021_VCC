@@ -9,11 +9,7 @@ const OptionList = ({lists, handleOptionBtn}) => {
         )
     )
 
-    return (
-        <div>
-            {optionItem}
-        </div>
-    );
+    return optionItem
 }
 
 export default OptionList;

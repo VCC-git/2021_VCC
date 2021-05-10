@@ -1,20 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import * as TempMainStyle from '../../../assets/styles/Temperature/main';
 import TemperatureImg from '../../../assets/images/thermometer.png';
 import CircleTemperature from '../CircleTemperature/CircleTemperature';
 
-const TemperatureMain = ({power, handleTempPower, value, onIncreaseTemp, onDecreaseTemp}) => {
-    const [stat, setStat] = useState('OFF'); // ON/OFF를 나타내주는 변수
+const TemperatureMain = ({ power, handleTempPower, value, onIncreaseTemp, onDecreaseTemp}) => {
 
-    useEffect(() => {
-        console.log(power);
-        setStat(stat => power ? 'ON' : 'OFF' );
-    }, [power])
-
+    // 경고문 함수
     const tempAlert = () => {
         alert("전원을 켜주세요.")
     }
 
+    // 온도 내려주는 함수 만약 전원이 안 들어오면 경고문 보냄
     const handleOnDecreaseTemp = () => {
         if(power) {
             onDecreaseTemp();
@@ -23,6 +19,7 @@ const TemperatureMain = ({power, handleTempPower, value, onIncreaseTemp, onDecre
         }
     }
 
+    // 온도 올려주는 함수 만약 전원이 안 들어오면 경고문 보냄
     const handleOnIncreaseTemp = () => {
         if(power) {
             onIncreaseTemp();
@@ -38,14 +35,14 @@ const TemperatureMain = ({power, handleTempPower, value, onIncreaseTemp, onDecre
                 <TempMainStyle.MainTitleText>Room Temperature</TempMainStyle.MainTitleText>
             </TempMainStyle.MainTitle>
             <TempMainStyle.MainStat>
-                <TempMainStyle.MainStatText>{stat}</TempMainStyle.MainStatText>
-                <TempMainStyle.MainStatbtnBack onClick={() => handleTempPower(!power)} now={stat}>
-                    <TempMainStyle.MainStatbtnCircle onClick={() => handleTempPower(!power)} now={stat}/>
+                <TempMainStyle.MainStatText>{power ? 'ON' : 'OFF'}</TempMainStyle.MainStatText>
+                <TempMainStyle.MainStatbtnBack onClick={() => handleTempPower(!power)} now={power}>
+                    <TempMainStyle.MainStatbtnCircle onClick={() => handleTempPower(!power)} now={power}/>
                 </TempMainStyle.MainStatbtnBack>
             </TempMainStyle.MainStat>
 
             <TempMainStyle.TempStatus>
-                <TempMainStyle.MiddleTemp>20℃</TempMainStyle.MiddleTemp>
+                <TempMainStyle.MiddleTemp>19℃</TempMainStyle.MiddleTemp>
 
                 <TempMainStyle.MinusTemp>
                     <TempMainStyle.MinusBtn onClick={() => handleOnDecreaseTemp()}>-</TempMainStyle.MinusBtn>
@@ -57,7 +54,7 @@ const TemperatureMain = ({power, handleTempPower, value, onIncreaseTemp, onDecre
                 </TempMainStyle.CircleTemp>
 
                 <TempMainStyle.PlusTemp>
-                    <TempMainStyle.EndTemp>30℃</TempMainStyle.EndTemp>
+                    <TempMainStyle.EndTemp>28℃</TempMainStyle.EndTemp>
                     <TempMainStyle.PlusBtn onClick={() => handleOnIncreaseTemp()}>+</TempMainStyle.PlusBtn>
                 </TempMainStyle.PlusTemp>
 

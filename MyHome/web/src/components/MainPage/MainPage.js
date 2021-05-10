@@ -3,43 +3,31 @@ import OptionList from './../option/OptionList/OptionList';
 import TemperatureMain from './../Temperature/TemperatureMain/TemperatureMain'
 import * as MainStyle from '../../assets/styles/mainPage/mainPage';
 import { connect } from 'react-redux';
-import { setOptionList, setTempPower, setTempIncrease, setTempDecrease } from '../../actions';
+import { setAuto } from '../../actions/Auto';
+import { setOption } from '../../actions/Option';
+import { setTempPower, setTempIncrease, setTempDecrease } from '../../actions/Temp';
 
 // 메인페이지
-const MainPage = ({ list, on, diff, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
-
-    const [opList, setOpList] = useState([]), // option에 들어갈 정보
-          [opType, setOpType] = useState(-1), // option 정보를 바꾸면 해당 id를 opType에 저장하여 행동한다.
-          [tempPowerType, setTempPowerType] = useState(false); // temp의 전원을 담당하는 변수
-
-    // 초반 opList 저장
-    useEffect(() => {
-        setOpList(state => list);
-        setTempPowerType(state => on);
-    }, [list, on]);
+const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
+    const [opType, setOpType] = useState(-1); // option 정보를 바꾸면 해당 id를 opType에 저장하여 행동한다.
 
     // 해당 아이템의 버튼을 누른 경우 opType의 값을 변경한다.
     const handleOptionBtn = (num) => {
-        setOpType(num);
-    }
-
-    // temp 전원 버튼 누를 시 작동하는 함수 tempPowerType을 바꿈.
-    const handleTempPower = (value) => {
-        setTempPowerType(value);
+        if(auto) {
+            alert("자동모드를 해제해주세요");
+        } else {
+            setOpType(num);
+        }
     }
 
     // handleOptionBtn에서 opType을 바꾼 후 opList 또한 바꾼다.
     useEffect(() => {
         if(opType !== -1) {
-            opList.splice(opType-1, 1, {id: opType, title: opList[opType-1].title, on: !opList[opType-1].on, img: opList[opType-1].img});
-            onChangeOption(opList);
+            list.splice(opType-1, 1, {id: opType, title: list[opType-1].title, on: !list[opType-1].on, img: list[opType-1].img});
+            onChangeOption(list);
             setOpType(-1);
         }
-    }, [opType, opList, onChangeOption])
-
-    useEffect(() => {
-        onChangeTempPower(tempPowerType);
-    }, [tempPowerType, onChangeTempPower])
+    }, [opType, list, onChangeOption])
 
     return (
         <MainStyle.Container>
@@ -53,17 +41,23 @@ const MainPage = ({ list, on, diff, onChangeOption, onChangeTempPower, onIncreas
                 <MainStyle.OptionTitle>
                     Option
                 </MainStyle.OptionTitle>
+                <MainStyle.AutoContent>
+                    <MainStyle.AutoTitle>Auto</MainStyle.AutoTitle>
+                    <MainStyle.BtnBack now={auto} onClick={() => onChangeAuto()}>
+                        <MainStyle.BtnCircle now={auto}/>
+                    </MainStyle.BtnBack>
+                </MainStyle.AutoContent>
                 {/* 가구들의 기능 */}
                 <MainStyle.Optioin>
                     {/* 가구들의 기능 리스트 */}
-                    <OptionList lists={opList} handleOptionBtn={handleOptionBtn}></OptionList>
+                    <OptionList lists={list} handleOptionBtn={handleOptionBtn}></OptionList>
                 </MainStyle.Optioin>
                 {/* 온도계 */}
                 <MainStyle.Temperature>
                     <TemperatureMain 
-                        power={tempPowerType} 
-                        handleTempPower={handleTempPower}
-                        value={diff}
+                        power={on} 
+                        handleTempPower={(value) => onChangeTempPower(value)}
+                        value={temp}
                         onIncreaseTemp={onIncreaseTemp}
                         onDecreaseTemp={onDecreaseTemp}
                     />
@@ -84,20 +78,20 @@ const MainPage = ({ list, on, diff, onChangeOption, onChangeTempPower, onIncreas
     )
 }
 
-// list 값 출력
 let mapStateToProps = (state) => {
     return {
-        list: state.optionList.list,
-        on: state.tempPower.value,
-        diff: state.tempOption.diff
+        auto: state.auto.auto,
+        list: state.option.list,
+        on: state.temp.on,
+        temp: state.temp.temp
     }
 }
 
-// onChangeOption을 실행할 경우 dispatch할 action을 정의
 let mapDispatchToProps = (dispatch) => {
     return {
-        onChangeOption: (list) => dispatch(setOptionList(list)),
-        onChangeTempPower: (value) => dispatch(setTempPower(value)),
+        onChangeAuto: () => dispatch(setAuto()),
+        onChangeOption: (list) => dispatch(setOption(list)),
+        onChangeTempPower: (on) => dispatch(setTempPower(on)),
         onIncreaseTemp: () => dispatch(setTempIncrease()),
         onDecreaseTemp: () => dispatch(setTempDecrease())
     };

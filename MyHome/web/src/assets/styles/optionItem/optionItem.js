@@ -28,9 +28,10 @@ export const btnBack = styled.div`
     border-radius: 100px;
     width: 35px;
     height: 16px;
+    cursor: pointer;
     
     ${props => 
-        props.now === 'OFF' ?
+        !props.now ?
         css`
             background: #D6D6D6;
         ` :
@@ -49,10 +50,10 @@ export const btnCircle = styled.button`
     background: white;
     border: none;
     box-shadow: 0px 3px 6px #C8C8C8;
-
+    cursor: pointer;
 
     ${props => 
-        props.now === 'ON' &&
+        props.now &&
         css`
             margin-left: 20px;
             box-shadow: 0px 3px 6px #181733;

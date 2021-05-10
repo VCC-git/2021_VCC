@@ -21,7 +21,7 @@ export const MainTitleImage = styled.img`
 export const MainTitleText = styled.div`
     font-size: 20px;
     font-weight: bold;
-    color: #181733
+    color: #181733;
 `;
 
 export const MainStat = styled.div`
@@ -42,9 +42,10 @@ export const MainStatbtnBack = styled.div`
     border-radius: 100px;
     width: 35px;
     height: 16px;
+    cursor: pointer;
 
     ${props => 
-        props.now === 'OFF' ?
+        !props.now ?
         css`
             background: #D6D6D6;
         ` :
@@ -63,9 +64,10 @@ export const MainStatbtnCircle = styled.button`
     background: white;
     border: none;
     box-shadow: 0px 3px 6px #C8C8C8;
+    cursor: pointer;
 
     ${props => 
-        props.now === 'ON' &&
+        props.now &&
         css`
             margin-left: 20px;
             box-shadow: 0px 3px 6px #181733;
@@ -109,6 +111,7 @@ export const MinusBtn = styled.button`
     outline: none;
     box-shadow: 0px 3px 6px #C8C8C8;
     border-radius: 5px;
+    cursor: pointer;
 
     &:active {
         box-shadow: inset 0px 3px 6px #C8C8C8;
@@ -159,6 +162,7 @@ export const PlusBtn = styled.button`
     outline: none;
     box-shadow: 0px 3px 6px #C8C8C8;
     border-radius: 5px;
+    cursor: pointer;
 
     &:active {
         box-shadow: inset 0px 0px 6px #181733;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 
 export const Container = styled.div`
     position: relative;
@@ -31,6 +31,57 @@ export const OptionTitle = styled.div`
     font-size: 40px;
     float: left;
     margin-bottom: 5px;
+`;
+
+export const AutoContent = styled.div`
+    float: right;
+    width: 150px;
+    margin-top: 10px;
+`;
+
+export const AutoTitle = styled.div`
+    font-size: 30px;
+    font-weight: bold;
+    float:left;
+`;
+
+export const BtnBack = styled.div`
+    float: right;
+    border-radius: 100px;
+    width: 60px;
+    height: 25px;
+    cursor: pointer;
+    margin-top: 10px;
+    
+    ${props => 
+        props.now === false ?
+        css`
+            background: #D6D6D6;
+        ` :
+        css`
+            background: #5E58EA;
+        `
+    }
+`;
+
+export const BtnCircle = styled.button`
+    position: absolute;
+    height: 25px;
+    width: 25px;
+    border-radius: 100px;
+    outline: none;
+    background: white;
+    border: none;
+    box-shadow: 0px 3px 6px #C8C8C8;
+    cursor: pointer;
+
+    ${props => 
+        props.now === true &&
+        css`
+            margin-left: 35px;
+            box-shadow: 0px 3px 6px #181733;
+        `
+    }
 `;
 
 export const Optioin = styled.div`
