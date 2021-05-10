@@ -11,6 +11,8 @@ const endpoint = 'http://localhost:8080';
 
 // 메인페이지
 const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
+    const socket = io(endpoint);
+
     const [opType, setOpType] = useState(-1); // option 정보를 바꾸면 해당 id를 opType에 저장하여 행동한다.
 
     // 해당 아이템의 버튼을 누른 경우 opType의 값을 변경한다.
@@ -23,10 +25,8 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
     }
 
     useEffect(() => {
-        const socket = io(endpoint);
         socket.emit('homestart', "VCC");
         socket.on("manualdata", (auto) => {
-            console.log(auto.status);
             onChangeAuto(auto.status ? true : false);
         })
     }, [])
@@ -39,6 +39,11 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
             setOpType(-1);
         }
     }, [opType, list, onChangeOption])
+
+    const handleChangeAuto = () => {
+        onChangeAuto(auto ? true : false);
+        socket.emit("putauto")
+    }
 
     return (
         <MainStyle.Container>
@@ -54,7 +59,7 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
                 </MainStyle.OptionTitle>
                 <MainStyle.AutoContent>
                     <MainStyle.AutoTitle>Auto</MainStyle.AutoTitle>
-                    <MainStyle.BtnBack now={auto} onClick={() => onChangeAuto(!auto)}>
+                    <MainStyle.BtnBack now={auto} onClick={() => handleChangeAuto()}>
                         <MainStyle.BtnCircle now={auto}/>
                     </MainStyle.BtnBack>
                 </MainStyle.AutoContent>
