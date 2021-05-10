@@ -1,8 +1,4 @@
-var express = require('express');
-var router = express.Router();
-
-router.get('/', function(req, res) {
-    res.send({greeting: 'Hello React x Node.js'});
-});
+const express = require('express');
+const router = express.Router();
 
 module.exports = router;
