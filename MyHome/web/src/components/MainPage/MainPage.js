@@ -26,19 +26,16 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
 
     useEffect(() => {
         socket.emit('homestart', "VCC");
-        socket.on("manualdata", (auto) => {
+        socket.on("auto", (auto) => {
             onChangeAuto(auto.status ? true : false);
         })
+        socket.on("temppower", (temp) => {
+            onChangeTempPower(temp.status ? true : false);
+        })
+        socket.on("menual", (lists) => {
+            onChangeOption(lists);
+        })
     }, [])
-
-    // handleOptionBtn에서 opType을 바꾼 후 opList 또한 바꾼다.
-    useEffect(() => {
-        if(opType !== -1) {
-            list.splice(opType-1, 1, {id: opType, title: list[opType-1].title, on: !list[opType-1].on, img: list[opType-1].img});
-            onChangeOption(list);
-            setOpType(-1);
-        }
-    }, [opType, list, onChangeOption])
 
     const handleChangeAuto = () => {
         onChangeAuto(auto ? true : false);
@@ -97,7 +94,7 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
 let mapStateToProps = (state) => {
     return {
         auto: state.auto.auto,
-        list: state.option.list,
+        list: state.option.lists,
         on: state.temp.on,
         temp: state.temp.temp
     }
@@ -106,7 +103,7 @@ let mapStateToProps = (state) => {
 let mapDispatchToProps = (dispatch) => {
     return {
         onChangeAuto: (auto) => dispatch(setAuto(auto)),
-        onChangeOption: (list) => dispatch(setOption(list)),
+        onChangeOption: (lists) => dispatch(setOption(lists)),
         onChangeTempPower: (on) => dispatch(setTempPower(on)),
         onIncreaseTemp: () => dispatch(setTempIncrease()),
         onDecreaseTemp: () => dispatch(setTempDecrease())
