@@ -3,6 +3,7 @@ const http = require("http");
 const socketIo = require('socket.io');
 const getConnection = require('./models');
 const logger = require('morgan');
+const { SSL_OP_NO_TICKET } = require('constants');
 
 const port = 8080;
 
@@ -21,32 +22,30 @@ const io = socketIo(server, {
 
 
 io.on("connection", (socket) => {
-    console.log("New client connected");
-    
     socket.on("homestart", (name) => {
-        console.log(name);
         socket.join(name);
     });
-
-    get_auto(socket);
 
     socket.on("putauto", () => {
         put_auto();
     })
 
-    setInterval(() => {
-        get_auto(socket);
-    }, 500);
+    get_menual(socket)
 
+    setInterval(() => {
+        get_menual(socket);
+    }, 1000);
 });
 
-const get_auto = (socket) => {
+const get_menual = (socket) => {
     getConnection((connection) => {
-        connection.query(`select status from think where name='auto';`, function(err, rows) {
+        connection.query(`select name, status from think order by length(name), name;`, function(err, rows) {
             if(err) {
                 console.log({message: 'auto get failed'});
             } else {
-                socket.emit("manualdata", rows[0]);
+                socket.emit("auto", rows[0]);
+                socket.emit("temppower", rows[5]);
+                socket.emit("menual", rows.slice(1, 5));
             }
         })
 
