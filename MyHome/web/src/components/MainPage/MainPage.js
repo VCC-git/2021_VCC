@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { setAuto } from '../../actions/Auto';
 import { setOption } from '../../actions/Option';
 import { setTempPower, setTempIncrease, setTempDecrease } from '../../actions/Temp';
+import io from "socket.io-client";
+const endpoint = 'http://localhost:8080';
 
 // 메인페이지
 const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
@@ -19,6 +21,11 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
             setOpType(num);
         }
     }
+
+    useEffect(() => {
+        const socket = io(endpoint);
+        
+    }, [])
 
     // handleOptionBtn에서 opType을 바꾼 후 opList 또한 바꾼다.
     useEffect(() => {
