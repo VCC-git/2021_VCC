@@ -24,7 +24,11 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
 
     useEffect(() => {
         const socket = io(endpoint);
-        
+        socket.emit('homestart', "VCC");
+        socket.on("manualdata", (auto) => {
+            console.log(auto.status);
+            onChangeAuto(auto.status ? true : false);
+        })
     }, [])
 
     // handleOptionBtn에서 opType을 바꾼 후 opList 또한 바꾼다.
@@ -50,7 +54,7 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
                 </MainStyle.OptionTitle>
                 <MainStyle.AutoContent>
                     <MainStyle.AutoTitle>Auto</MainStyle.AutoTitle>
-                    <MainStyle.BtnBack now={auto} onClick={() => onChangeAuto()}>
+                    <MainStyle.BtnBack now={auto} onClick={() => onChangeAuto(!auto)}>
                         <MainStyle.BtnCircle now={auto}/>
                     </MainStyle.BtnBack>
                 </MainStyle.AutoContent>
@@ -96,7 +100,7 @@ let mapStateToProps = (state) => {
 
 let mapDispatchToProps = (dispatch) => {
     return {
-        onChangeAuto: () => dispatch(setAuto()),
+        onChangeAuto: (auto) => dispatch(setAuto(auto)),
         onChangeOption: (list) => dispatch(setOption(list)),
         onChangeTempPower: (on) => dispatch(setTempPower(on)),
         onIncreaseTemp: () => dispatch(setTempIncrease()),

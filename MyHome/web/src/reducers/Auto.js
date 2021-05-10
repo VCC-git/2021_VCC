@@ -8,7 +8,7 @@ const auto = (state = autoIntialState, action) => {
     switch(action.type) {
         case SET_AUTO:
             return Object.assign({}, state, {
-                auto: !(state.auto)
+                auto: action.auto
             })
         default:
             return state
