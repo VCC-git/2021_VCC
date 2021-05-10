@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/auto', require('./auto'));
+router.use('/think', require('./think'));
 
 module.exports = router;
