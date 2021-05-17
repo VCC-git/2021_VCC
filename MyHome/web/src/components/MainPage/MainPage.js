@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import OptionList from './../option/OptionList/OptionList';
 import TemperatureMain from './../Temperature/TemperatureMain/TemperatureMain'
 import * as MainStyle from '../../assets/styles/mainPage/mainPage';
@@ -7,20 +7,24 @@ import { setAuto } from '../../actions/Auto';
 import { setOption } from '../../actions/Option';
 import { setTempPower, setTempIncrease, setTempDecrease } from '../../actions/Temp';
 import io from "socket.io-client";
+
 const endpoint = 'http://localhost:8080';
 
 // 메인페이지
 const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
     const socket = io(endpoint);
 
-    const [opType, setOpType] = useState(-1); // option 정보를 바꾸면 해당 id를 opType에 저장하여 행동한다.
-
     // 해당 아이템의 버튼을 누른 경우 opType의 값을 변경한다.
     const handleOptionBtn = (num) => {
         if(auto) {
             alert("자동모드를 해제해주세요");
         } else {
-            setOpType(num);
+            console.log(num);
+            console.log(list[num-1].title);
+            socket.emit("option", list[num-1].title.toLowerCase());
+            socket.on("menual", (lists) => {
+                onChangeOption(lists);
+            })
         }
     }
 
