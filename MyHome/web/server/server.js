@@ -3,7 +3,6 @@ const http = require("http");
 const socketIo = require('socket.io');
 const getConnection = require('./models');
 const logger = require('morgan');
-const { SSL_OP_NO_TICKET } = require('constants');
 
 const port = 8080;
 
@@ -30,7 +29,11 @@ io.on("connection", (socket) => {
         put_auto();
     })
 
-    get_menual(socket)
+    socket.on("option", (title) => {
+        option_change(socket, title);
+    })
+
+    get_menual(socket);
 
     setInterval(() => {
         get_menual(socket);
@@ -58,12 +61,22 @@ const put_auto = () => {
         connection.query(`update think set status=if(status=0, 1, 0) where name='auto';`, function(err, rows) {
             if(err) {
                 console.log({message: 'auto change failed'});
-            } else {
-                console.log({message: 'auto change success', rows});
             }
         })
 
         connection.release();
+    })
+}
+
+const option_change = (socket, title) => {
+    getConnection((connection) => {
+        connection.query(`update think set status=if(status=0, 1, 0) where name='${title}'`, function(err, rows) {
+            if(err) {
+                console.log({message: 'option change failed'});
+            } else {
+                get_menual(socket);
+            }
+        })
     })
 }
 
