@@ -36,8 +36,8 @@ const TemperatureMain = ({ power, handleTempPower, value, onIncreaseTemp, onDecr
             </TempMainStyle.MainTitle>
             <TempMainStyle.MainStat>
                 <TempMainStyle.MainStatText>{power ? 'ON' : 'OFF'}</TempMainStyle.MainStatText>
-                <TempMainStyle.MainStatbtnBack onClick={() => handleTempPower(!power)} now={power}>
-                    <TempMainStyle.MainStatbtnCircle onClick={() => handleTempPower(!power)} now={power}/>
+                <TempMainStyle.MainStatbtnBack onClick={() => handleTempPower()} now={power}>
+                    <TempMainStyle.MainStatbtnCircle now={power}/>
                 </TempMainStyle.MainStatbtnBack>
             </TempMainStyle.MainStat>
 

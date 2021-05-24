@@ -5,45 +5,48 @@ import * as MainStyle from '../../assets/styles/mainPage/mainPage';
 import { connect } from 'react-redux';
 import { setAuto } from '../../actions/Auto';
 import { setOption } from '../../actions/Option';
-import { setTempPower, setTempIncrease, setTempDecrease } from '../../actions/Temp';
+import { setTempPower, setTempIncrease, setTempDecrease, setTempValue } from '../../actions/Temp';
 import io from "socket.io-client";
 
 const endpoint = 'http://localhost:8080';
 
 // 메인페이지
-const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp }) => {
+const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChangeTempPower, onIncreaseTemp, onDecreaseTemp, onChangeTempValue }) => {
     const socket = io(endpoint);
+
+    // 처음 로드했을 때 가져오는 값들
+    useEffect(() => {
+        socket.emit('homestart', "VCC");
+        socket.on("getAuto", (auto) => {
+            onChangeAuto(auto ? true : false);
+        })
+        socket.on("getOption", (lists) => {
+            onChangeOption(lists);
+        })
+        socket.on("getTempPower", (tempPower) => {
+            onChangeTempPower(tempPower ? true : false);
+        })
+    }, [socket, onChangeAuto, onChangeOption, onChangeTempPower])
 
     // 해당 아이템의 버튼을 누른 경우 opType의 값을 변경한다.
     const handleOptionBtn = (num) => {
         if(auto) {
             alert("자동모드를 해제해주세요");
         } else {
-            console.log(num);
-            console.log(list[num-1].title);
-            socket.emit("option", list[num-1].title.toLowerCase());
-            socket.on("menual", (lists) => {
-                onChangeOption(lists);
-            })
+            socket.emit("putOption", list[num-1].title.toLowerCase());
         }
     }
 
-    useEffect(() => {
-        socket.emit('homestart', "VCC");
-        socket.on("auto", (auto) => {
-            onChangeAuto(auto.status ? true : false);
-        })
-        socket.on("temppower", (temp) => {
-            onChangeTempPower(temp.status ? true : false);
-        })
-        socket.on("menual", (lists) => {
-            onChangeOption(lists);
-        })
-    }, [])
-
+    // 해당 auto 값을 변경한다.
     const handleChangeAuto = () => {
         onChangeAuto(auto ? true : false);
-        socket.emit("putauto")
+        socket.emit("putAuto");
+    }
+ 
+    // 해당 temperature의 전원 값을 변경한다.
+    const handleTempPower = () => {
+        console.log("temp");
+        socket.emit("putTempPower");
     }
 
     return (
@@ -73,7 +76,7 @@ const MainPage = ({ auto, list, on, temp, onChangeAuto, onChangeOption, onChange
                 <MainStyle.Temperature>
                     <TemperatureMain 
                         power={on} 
-                        handleTempPower={(value) => onChangeTempPower(value)}
+                        handleTempPower={handleTempPower}
                         value={temp}
                         onIncreaseTemp={onIncreaseTemp}
                         onDecreaseTemp={onDecreaseTemp}
@@ -110,7 +113,8 @@ let mapDispatchToProps = (dispatch) => {
         onChangeOption: (lists) => dispatch(setOption(lists)),
         onChangeTempPower: (on) => dispatch(setTempPower(on)),
         onIncreaseTemp: () => dispatch(setTempIncrease()),
-        onDecreaseTemp: () => dispatch(setTempDecrease())
+        onDecreaseTemp: () => dispatch(setTempDecrease()),
+        onChangeTempValue: (value) => dispatch(setTempValue(value))
     };
 }
 
