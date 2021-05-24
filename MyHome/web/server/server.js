@@ -24,34 +24,86 @@ io.on("connection", (socket) => {
     socket.on("homestart", (name) => {
         socket.join(name);
     });
+    
+    setInterval(() => {
+        get_auto((err, getAuto) => {
+            if (err) console.log("auto get failed");
+            else socket.emit("getAuto", getAuto);
+        });
+    
+        get_option((err, getOption) => {
+            if (err) console.log("option get failed");
+            else socket.emit("getOption", getOption);
+        });
+    
+        get_temppower((err, getTempPower) => {
+            if (err) console.log("temperature power get failed");
+            else socket.emit("getTempPower", getTempPower);
+        });
+    }, 1000);
 
-    socket.on("putauto", () => {
+    socket.on("putAuto", () => {
         put_auto();
     })
 
-    socket.on("option", (title) => {
-        option_change(socket, title);
+    socket.on("putOption", (title) => {
+        put_option(title);
     })
 
-    get_menual(socket);
-
-    setInterval(() => {
-        get_menual(socket);
-    }, 1000);
+    socket.on("putTempPower", () => {
+        put_temppower();
+    })
+   
 });
 
-const get_menual = (socket) => {
+let getAuto = 0;
+let getOption = [];
+let getTempPower = 0;
+
+const get_auto = (callback) => {
     getConnection((connection) => {
-        connection.query(`select name, status from think order by length(name), name;`, function(err, rows) {
+        connection.query(`select status from think where name="auto";`, (err, rows) => {
             if(err) {
                 console.log({message: 'auto get failed'});
+                return callback(err);
             } else {
-                socket.emit("auto", rows[0]);
-                socket.emit("temppower", rows[5]);
-                socket.emit("menual", rows.slice(1, 5));
+                getAuto = rows[0].status;
             }
+            callback(null, getAuto);
         })
+        connection.release();
+    })
+}
 
+const get_option = (callback) => {
+    getConnection((connection) => {
+        connection.query(`select name, status from think order by length(name), name;`, (err, rows) => {
+            if(err) {
+                console.log({message: 'option get failed'});
+                return callback(err);
+            } else {
+                getOption = [];
+                for(let i=0;i<4;i++) {
+                    getOption.push(rows[i+1])
+                }
+            }
+            callback(null, getOption);
+        })
+        connection.release();
+    })
+}
+
+const get_temppower = (callback) => {
+    getConnection((connection) => {
+        connection.query(`select status from think where name="temperature"`, (err, rows) => {
+            if(err) {
+                console.log({message: 'temperature power get failed'});
+                return callback(err);
+            } else {
+                getTempPower = rows[0].status
+            }
+            callback(null, getTempPower);
+        })
         connection.release();
     })
 }
@@ -61,22 +113,37 @@ const put_auto = () => {
         connection.query(`update think set status=if(status=0, 1, 0) where name='auto';`, function(err, rows) {
             if(err) {
                 console.log({message: 'auto change failed'});
+            } else {
+                console.log({message: 'auto change success'});
             }
         })
-
         connection.release();
     })
 }
 
-const option_change = (socket, title) => {
+const put_option = (title) => {
     getConnection((connection) => {
         connection.query(`update think set status=if(status=0, 1, 0) where name='${title}'`, function(err, rows) {
             if(err) {
                 console.log({message: 'option change failed'});
             } else {
-                get_menual(socket);
+                console.log({message: 'option change success'});
             }
         })
+    })
+}
+
+const put_temppower = () => {
+    getConnection((connection) => {
+        connection.query(`update think set status=if(status=0, 1, 0) where name='temperature';`, function(err, rows) {
+            if(err) {
+                console.log({message: 'temp power change failed'});
+            } else {
+                console.log({message: 'temp power change success'});
+            }
+        })
+
+        connection.release();
     })
 }
 
